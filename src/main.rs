@@ -11,7 +11,7 @@ use gcpdyndns::{
     external::get_external_ip,
     persistent::Persistance,
 };
-use log::{LevelFilter, error, info};
+use log::{LevelFilter, error, warn};
 use rstaples::{display::printkv, logging::StaplesLogger};
 use tokio::time::sleep;
 
@@ -88,9 +88,8 @@ async fn update(persistent: &mut Persistance, args: &UserArgs) -> Result<()> {
 
     let changed = persistent.ip_changed(&ip_addr);
 
-    info!("changed: {changed}");
-
     if changed || args.force {
+        warn!("changed: {changed}");
         edit_dns_record(&args.project, &args.zone, &args.name, &ip_addr).await?;
         persistent.update(ip_addr)?;
     }
@@ -144,7 +143,7 @@ async fn main() -> Result<()> {
         }
     }
 
-    let mut persistent = Persistance::new(data_dir)?;
+    let mut persistent = Persistance::new(data_dir, &args.name)?;
 
     match args.poll_frequency {
         Some(v) => {
