@@ -83,7 +83,7 @@ async fn update(mut persistent: Persistance, args: UserArgs) -> Result<()> {
     let changed = persistent.ip_changed(&ip_addr);
 
     if changed || args.force {
-        warn!("changed: {changed}");
+        warn!("new ip {ip_addr}");
         edit_dns_record(&args.project, &args.zone, &args.name, &ip_addr).await?;
         persistent.update(ip_addr)?;
     }
