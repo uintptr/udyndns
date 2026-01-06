@@ -1280,9 +1280,9 @@ dependencies = [
 
 [[package]]
 name = "rstaples"
-version = "0.3.1"
+version = "0.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "891e6923128688f650392a13dea3c56ab7bf613855a97724e5edae710bbc5cb2"
+checksum = "a9a75e332a26bd5c37bdb0d04fb601b08b53e6c9d01d15a3f24b760c630ef268"
 dependencies = [
  "chrono",
  "colored",

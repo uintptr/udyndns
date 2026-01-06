@@ -6,6 +6,8 @@ use clap::Args;
 use reqwest::Client;
 use serde::Serialize;
 
+use log::error;
+
 use crate::{error::Error, external::ExternalIp};
 
 const DNS_API_URL: &str = "https://dns.googleapis.com/dns/v1beta2/projects";
@@ -75,7 +77,7 @@ impl GcpArgs {
         let client = Client::new();
 
         let res = client
-            .patch(url)
+            .patch(&url)
             .header("Content-Type", "application/json")
             .bearer_auth(token)
             .json(&req_data)
@@ -85,12 +87,16 @@ impl GcpArgs {
         if res.status().is_success() {
             Ok(())
         } else {
+            error!("{url} returned {}", res.status().as_str());
             Err(Error::UpdateFailure(res.status()).into())
         }
     }
 
     pub async fn update(&self, ip: &ExternalIp) -> Result<()> {
-        self.install_auth()?;
+        if let Err(e) = self.install_auth() {
+            error!("unable to install auth ({e})");
+            return Err(e.into());
+        }
 
         self.edit_dns_record(ip).await
     }
